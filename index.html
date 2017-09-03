@@ -95,10 +95,8 @@
         .templates(
           'repo-list',
           { markup: '#repo-list', templates: { repo: $.templates('#repo') } },
-        )
-        .render({ repos: repos });
+        );
 
-      $('#app').html(repoList);
 
       $(document).on('click', '.bookmark', () => {
       });
