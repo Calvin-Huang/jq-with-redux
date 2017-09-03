@@ -97,7 +97,14 @@
           { markup: '#repo-list', templates: { repo: $.templates('#repo') } },
         );
 
+      function fetchPublicRepos() {
+      }
 
+      function intialApp() {
+        fetchPublicRepos();
+      }
+
+      intialApp();
     </script>
   </body>
 </html>
