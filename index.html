@@ -37,7 +37,10 @@
 
     <!-- Template: repo-list -->
     <script id="repo-list" type="text/x-jsrender">
-      <h1 class="mt-1 mb-4">Explore JavaScript repos</h1>
+      <h1 class="mt-1">Explore JavaScript repos</h1>
+      <div class="btn-toolbar justify-content-end mb-4">
+        <a href="#/bookself" class="btn">Bookshelf</a>
+      </div>
       <ul class="list-unstyled">
         {^{for repos}}
           <li class="d-flex">
