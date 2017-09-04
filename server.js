@@ -21,6 +21,34 @@ apiV1Route.get('/bookmarks', async (req, res) => {
   res.json(bookmarks);
 });
 
+apiV1Route.post('/bookmarks', async (req, res) => {
+  const { repoId, fullName } = req.body;
+
+  try {
+    const bookmark = await Bookmark.findOrCreate({ repoId, fullName });
+
+    res.json(bookmark);
+  } catch (error) {
+    res
+      .status(400)
+      .json({ message: error.message });
+  };
+});
+
+apiV1Route.delete('/bookmarks/:repoId', async (req, res) => {
+  const { repoId } = req.params;
+
+  try {
+    await Bookmark.destroy({ where: { repoId } })
+
+    res.status(204);
+  } catch (error) {
+    res
+      .status(400)
+      .json({ message: error.messsage });
+  }
+})
+
 server.use('/api/v1', apiV1Route);
 
 server.listen('3000', () => {
