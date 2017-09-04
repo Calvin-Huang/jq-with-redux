@@ -143,6 +143,20 @@
           repos: repos,
         };
       }
+
+      /**
+       * Reducers
+       */
+      function repos(state = [], action) {
+        switch (action.type) {
+          case RECEIVE_PUBLIC_REPOS:
+            return state.concat(action.repos);
+          
+          default:
+            return state;
+        }
+      }
+
       const store = Redux.createStore(
         window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
       );
