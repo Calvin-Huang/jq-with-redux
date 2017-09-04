@@ -186,7 +186,8 @@
         );
 
       store.subscribe(() => {
-        const action = store.getState().lastAction;
+        const state = store.getState();
+        const action = state.lastAction;
 
         switch (action.type) {
           case FETCH_PUBLIC_REPOS: {
