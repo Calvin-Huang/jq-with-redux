@@ -29,6 +29,10 @@ apiV1Route.post('/bookmarks', async (req, res) => {
       throw new Error('Missing parameters');
     }
 
+    if (Math.round(Math.random())) {
+      throw new Error('Something happended');
+    }
+
     const bookmarks = await Bookmark.findOrCreate({ where: { repo_id, full_name } });
 
     res.json(bookmarks[0]);
@@ -43,6 +47,10 @@ apiV1Route.delete('/bookmarks/:repo_id', async (req, res) => {
   const { repo_id } = req.params;
 
   try {
+    if (Math.round(Math.random())) {
+      throw new Error('Something happended');
+    }
+
     await Bookmark.destroy({ where: { repo_id } });
 
     res.sendStatus(204);
