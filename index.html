@@ -152,10 +152,13 @@
       /**
        * Reducers
        */
-      function repos(state = [], action) {
+      function repos(state = { page: 1, data: [] }, action) {
         switch (action.type) {
+          case FETCH_REPOS_NEXT_PAGE:
+            return Object.assign(state, { page: state.page + 1 });
+
           case RECEIVE_PUBLIC_REPOS:
-            return state.concat(action.repos);
+            return Object.assign(state, { data: state.data.concat(action.repos) });
           
           default:
             return state;
