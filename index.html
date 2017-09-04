@@ -48,7 +48,7 @@
           </li>
         {{/for}}
       </ul>
-      <a href="#/more" class="btn btn-outline-primary btn-block mb-4">More</button>
+      <a href="#/more" class="btn btn-outline-primary btn-block mb-4 more-repo-btn">More</button>
     </script>
 
     <!-- Template: repo -->
@@ -97,6 +97,7 @@
     <script>
       var repos = [];
       var bookmarks = [];
+      var page = 1;
       
       const repoList = $
         .templates(
@@ -104,12 +105,12 @@
           { markup: '#repo-list', templates: { repo: $.templates('#repo') } },
         );
 
-      function fetchPublicRepos() {
-        $.getJSON('https://api.github.com/search/repositories?q=language:javascript&per_page=10&page=1')
+      function fetchPublicRepos(page = 1) {
+        $.getJSON(`https://api.github.com/search/repositories?q=language:javascript&per_page=10&page=${page}`)
           .done((data) => {
             const bookmarkIds = bookmarks.map(bookmark => bookmark.repo_id);
 
-            repos = data.items.map((repo) => Object.assign(repo, { is_saved: bookmarkIds.includes(repo.id) }));
+            repos = repos.concat(data.items.map((repo) => Object.assign(repo, { is_saved: bookmarkIds.includes(repo.id) })));
 
             $('#app').html(repoList.render({ repos: repos }));
           });
@@ -128,11 +129,15 @@
       }
 
       function intialApp() {
-        fetchPublicRepos();
+        fetchPublicRepos(page++);
         fetchBookmarks();
       }
 
       intialApp();
+
+      $(document).on('click', '.more-repo-btn', () => {
+        fetchPublicRepos(page++);
+      });
     </script>
   </body>
 </html>
