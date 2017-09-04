@@ -131,7 +131,7 @@
           .done((data) => {
             const bookmarkIds = bookmarks.map(bookmark => bookmark.repo_id);
 
-            repos = repos.concat(data.items.map((repo) => Object.assign(repo, { is_saved: bookmarkIds.includes(repo.id) })));
+            repos = repos.concat(data.items.map(repo => Object.assign(repo, { is_saved: bookmarkIds.includes(repo.id) })));
 
             $('#app').html(repoList.render({ repos: repos }));
           });
@@ -143,7 +143,7 @@
             bookmarks = data;
             const bookmarkIds = bookmarks.map(bookmark => bookmark.repo_id);
 
-            repos.map((repo) => Object.assign(repo, { is_saved: bookmarkIds.includes(repo.id) }));
+            repos.map(repo => Object.assign(repo, { is_saved: bookmarkIds.includes(repo.id) }));
 
             $('#app').html(repoList.render({ repos: repos }));
           });
