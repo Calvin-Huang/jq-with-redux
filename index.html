@@ -169,9 +169,6 @@
           contentType: 'application/json',
           url: '/api/v1/bookmarks',
           data: JSON.stringify({ repo_id: repoId, full_name: fullName }),
-          success: (data, textStatus, jqXHR) => {
-
-          },
           error: (jqXHR, textStatus, error) => {
             showNotification(`${error}: ${jqXHR.responseJSON.message}`);
 
@@ -188,9 +185,6 @@
           method: 'DELETE',
           contentType: 'json',
           url: `/api/v1/bookmarks/${repoId}`,
-          success: (data, textStatus, jqXHR) => {
-
-          },
           error: (jqXHR, textStatus, error) => {
             showNotification(error);
 
