@@ -147,6 +147,25 @@
           },
         });
       }
+
+      function deleteBookmark(repoId) {
+        $.ajax({
+          method: 'DELETE',
+          contentType: 'json',
+          url: `/api/v1/bookmarks/${repoId}`,
+          success: (data, textStatus, jqXHR) => {
+
+          },
+          error: (jqXHR, textStatus, error) => {
+            showNotification(error);
+
+            const selectedRepo = repos.find(repo => repo.id === repoId);
+            selectedRepo.is_saved = selectedRepo.is_saved;
+
+            $('#app').html(repoList.render({ repos: repos }));
+          },
+        });
+      }
       function intialApp() {
         fetchPublicRepos(page++);
         fetchBookmarks();
