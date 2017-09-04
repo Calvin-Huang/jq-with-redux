@@ -120,6 +120,10 @@
       var repos = [];
       var bookmarks = [];
       var page = 1;
+
+      const store = Redux.createStore(
+        window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
+      );
       
       const repoList = $
         .templates(
