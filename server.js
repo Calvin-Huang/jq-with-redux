@@ -56,8 +56,7 @@ apiV1Route.delete('/bookmarks/:repo_id', async (req, res) => {
     res.sendStatus(204);
   } catch (error) {
     res
-      .status(400)
-      .json({ message: error.messsage });
+      .sendStatus(404);
   }
 })
 
