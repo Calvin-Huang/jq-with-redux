@@ -121,6 +121,12 @@
       var bookmarks = [];
       var page = 1;
 
+      /**
+       * Action types
+       */
+      const FETCH_PUBLIC_REPOS = 'FETCH_PUBLIC_REPOS';
+      const RECEIVE_PUBLIC_REPOS = 'RECEIVE_FETCH_PUBLIC_REPOS';
+
       const store = Redux.createStore(
         window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
       );
