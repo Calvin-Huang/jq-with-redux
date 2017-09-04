@@ -1,8 +1,12 @@
 const path = require('path');
 const express = require('express');
+const bodyParser = require('body-parser');
+
 const server = express();
 
 const Bookmark = require('./models/bookmark');
+
+server.use(bodyParser.json());
 
 server.use('/views', express.static(path.resolve(__dirname, 'public', 'views')));
 
@@ -11,6 +15,7 @@ server.get('/', (req, res) => {
 });
 
 const apiV1Route = express.Router();
+
 apiV1Route.get('/bookmarks', async (req, res) => {
   const bookmarks = await Bookmark.findAll();
   res.json(bookmarks);
