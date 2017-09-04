@@ -127,6 +127,22 @@
       const FETCH_PUBLIC_REPOS = 'FETCH_PUBLIC_REPOS';
       const RECEIVE_PUBLIC_REPOS = 'RECEIVE_FETCH_PUBLIC_REPOS';
 
+      /**
+       * Action creators
+       */
+      function fetchPublicRepos(page = 1) {
+        return {
+          type: FETCH_PUBLIC_REPOS,
+          page: page,
+        };
+      }
+
+      function receivePublicRepos(repos) {
+        return {
+          type: FETCH_PUBLIC_REPOS,
+          repos: repos,
+        };
+      }
       const store = Redux.createStore(
         window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
       );
