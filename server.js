@@ -35,13 +35,13 @@ apiV1Route.post('/bookmarks', async (req, res) => {
   };
 });
 
-apiV1Route.delete('/bookmarks/:repoId', async (req, res) => {
-  const { repoId } = req.params;
+apiV1Route.delete('/bookmarks/:repo_id', async (req, res) => {
+  const { repo_id } = req.params;
 
   try {
-    await Bookmark.destroy({ where: { repoId } })
+    await Bookmark.destroy({ where: { repo_id } });
 
-    res.status(204);
+    res.sendStatus(204);
   } catch (error) {
     res
       .status(400)
