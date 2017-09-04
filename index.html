@@ -157,8 +157,13 @@
         }
       }
 
+      function lastAction(state = null, action) {
+        return action;
+      }
+
       const reducers = Redux.combineReducers({
         repos: repos,
+        lastAction: lastAction,
       });
 
       const store = Redux.createStore(
