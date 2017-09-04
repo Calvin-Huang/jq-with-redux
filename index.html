@@ -125,6 +125,8 @@
       const FETCH_PUBLIC_REPOS = 'FETCH_PUBLIC_REPOS';
       const RECEIVE_PUBLIC_REPOS = 'RECEIVE_FETCH_PUBLIC_REPOS';
 
+      const FETCH_REPOS_NEXT_PAGE = 'FETCH_REPOS_NEXT_PAGE';
+
       /**
        * Action creators
        */
@@ -139,6 +141,12 @@
           type: FETCH_PUBLIC_REPOS,
           repos: repos,
         };
+      }
+
+      function fetchReposNextPage() {
+        return {
+          type: FETCH_REPOS_NEXT_PAGE,
+        }
       }
 
       /**
