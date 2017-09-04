@@ -128,6 +128,25 @@
           });
       }
 
+      function createBookmark(repoId, fullName) {
+        $.ajax({
+          method: 'POST',
+          contentType: 'application/json',
+          url: '/api/v1/bookmarks',
+          data: JSON.stringify({ repo_id: repoId, full_name: fullName }),
+          success: (data, textStatus, jqXHR) => {
+
+          },
+          error: (jqXHR, textStatus, error) => {
+            showNotification(`${error}: ${jqXHR.responseJSON.message}`);
+
+            const selectedRepo = repos.find(repo => repo.id === repoId);
+            selectedRepo.is_saved = !selectedRepo.is_saved;
+
+            $('#app').html(repoList.render({ repos: repos }));
+          },
+        });
+      }
       function intialApp() {
         fetchPublicRepos(page++);
         fetchBookmarks();
