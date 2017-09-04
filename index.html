@@ -206,7 +206,7 @@
           }
 
           case RECEIVE_PUBLIC_REPOS: {
-            $('#app').html(repoList.render({ repos: repos.data }));
+            $('#app').html(repoList.render({ repos: state.repos.data }));
 
             break;
           }
