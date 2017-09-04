@@ -22,12 +22,12 @@ apiV1Route.get('/bookmarks', async (req, res) => {
 });
 
 apiV1Route.post('/bookmarks', async (req, res) => {
-  const { repoId, fullName } = req.body;
+  const { repo_id, full_name } = req.body;
 
   try {
-    const bookmark = await Bookmark.findOrCreate({ repoId, fullName });
+    const bookmarks = await Bookmark.findOrCreate({ where: { repo_id, full_name } });
 
-    res.json(bookmark);
+    res.json(bookmarks[0]);
   } catch (error) {
     res
       .status(400)
