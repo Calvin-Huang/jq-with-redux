@@ -185,16 +185,8 @@
           { markup: '#repo-list', templates: { repo: $.templates('#repo') } },
         );
 
-      function fetchPublicRepos(page = 1) {
-        $.getJSON(`https://api.github.com/search/repositories?q=language:javascript&per_page=10&page=${page}`)
-          .done((data) => {
-            const bookmarkIds = bookmarks.map(bookmark => bookmark.repo_id);
 
-            repos = repos.concat(data.items.map(repo => Object.assign(repo, { is_saved: bookmarkIds.includes(repo.id) })));
 
-            $('#app').html(repoList.render({ repos: repos }));
-          });
-      }
 
       function fetchBookmarks() {
         $.getJSON('/api/v1/bookmarks')
