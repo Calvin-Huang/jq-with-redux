@@ -278,7 +278,7 @@
       }
 
       function intialApp() {
-        fetchPublicRepos(page++);
+        store.dispatch(fetchPublicRepos());
         fetchBookmarks();
       }
 
