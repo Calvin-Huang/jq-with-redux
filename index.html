@@ -190,6 +190,13 @@
       $(document).on('click', '.more-repo-btn', () => {
         fetchPublicRepos(page++);
       });
+
+      $(document).on('click', '.bookmark', (e) => {
+        e.preventDefault();
+
+        const repoId = parseInt($(e.currentTarget).data('repo-id'), 10);
+        toggleBookmark(repoId);
+      });
     </script>
   </body>
 </html>
