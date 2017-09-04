@@ -25,6 +25,10 @@ apiV1Route.post('/bookmarks', async (req, res) => {
   const { repo_id, full_name } = req.body;
 
   try {
+    if (!repo_id || !full_name) {
+      throw new Error('Missing parameters');
+    }
+
     const bookmarks = await Bookmark.findOrCreate({ where: { repo_id, full_name } });
 
     res.json(bookmarks[0]);
