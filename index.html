@@ -127,6 +127,9 @@
 
       const FETCH_REPOS_NEXT_PAGE = 'FETCH_REPOS_NEXT_PAGE';
 
+      const FETCH_BOOKMARKS = 'FETCH_BOOKMARKS';
+      const RECEIVE_BOOKMARKS = 'RECEIVE_BOOKMARKS';
+
       /**
        * Action creators
        */
@@ -146,6 +149,18 @@
       function fetchReposNextPage() {
         return {
           type: FETCH_REPOS_NEXT_PAGE,
+        }
+      }
+
+      function fetchBookmarks() {
+        return {
+          type: FETCH_BOOKMARKS,
+        }
+      }
+
+      function receiveBookmarks() {
+        return {
+          type: RECEIVE_BOOKMARKS,
         }
       }
 
