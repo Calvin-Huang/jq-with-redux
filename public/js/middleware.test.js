@@ -53,6 +53,6 @@ describe('test middleware behavior', () => {
       store.dispatch(expectedActions[0]);
 
       expect(store.getActions()).toEqual(expectedActions);
-    })
+    });
   });
 });
