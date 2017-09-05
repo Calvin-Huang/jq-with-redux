@@ -125,6 +125,8 @@
 
       const FETCH_REPOS_NEXT_PAGE = 'FETCH_REPOS_NEXT_PAGE';
 
+      const SET_REPOS_ARE_SAVED = 'SET_REPOS_ARE_SAVED';
+
       const FETCH_BOOKMARKS = 'FETCH_BOOKMARKS';
       const RECEIVE_BOOKMARKS = 'RECEIVE_BOOKMARKS';
 
@@ -147,6 +149,13 @@
       function fetchReposNextPage() {
         return {
           type: FETCH_REPOS_NEXT_PAGE,
+        }
+      }
+
+      function setReposAreSaved(bookmarkIds) {
+        return {
+          type: SET_REPOS_ARE_SAVED,
+          bookmarkIds: bookmarkIds,
         }
       }
 
@@ -173,6 +182,15 @@
 
           case RECEIVE_PUBLIC_REPOS:
             return Object.assign(state, { data: state.data.concat(action.repos) });
+
+          case SET_REPOS_ARE_SAVED:
+            return Object.assign(
+              state,
+              { data: state.data.map(repo => (action.bookmarkIds.includes(repo.id))
+                ? Object.assign(repo, { is_saved: true })
+                : repo)
+              }
+            );
           
           default:
             return state;
