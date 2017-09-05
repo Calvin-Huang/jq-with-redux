@@ -23,7 +23,7 @@ describe('test middleware behavior', () => {
       bookmarks: [],
     });
 
-    it('createBookmark action should trigger bookmarkCreated and setReposAreSaved action', () => {
+    it('createBookmark action should triggers bookmarkCreated and setReposAreSaved action', () => {
       const expectedActions = [
         actions.createBookmark(1, 'foo/boo'),
         actions.bookmarkCreated(1, 'foo/boo'),
