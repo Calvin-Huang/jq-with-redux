@@ -135,6 +135,9 @@
       const CREATE_BOOKMARK = 'CREATE_BOOKMARK';
       const BOOKMARK_CREATED = 'BOOKMARK_CREATED';
 
+      const DELETE_BOOKMARK = 'DELETE_BOOKMARK';
+      const BOOKMARK_DELETED = 'BOOKMARK_DELETED';
+
       /**
        * Action creators
        */
@@ -197,6 +200,20 @@
           type: BOOKMARK_CREATED,
           repoId: repoId,
           fullName: fullName,
+        };
+      }
+
+      function deleteBookmark(repoId) {
+        return {
+          type: DELETE_BOOKMARK,
+          repoId: repoId,
+        };
+      }
+
+      function bookmarkDeleted(repoId) {
+        return {
+          type: BOOKMARK_DELETED,
+          repoId: repoId,
         };
       }
 
