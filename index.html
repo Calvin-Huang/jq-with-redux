@@ -130,6 +130,8 @@
       const FETCH_BOOKMARKS = 'FETCH_BOOKMARKS';
       const RECEIVE_BOOKMARKS = 'RECEIVE_BOOKMARKS';
 
+      const TOGGLE_BOOKMARK = 'TOGGLE_BOOKMARK';
+
       /**
        * Action creators
        */
@@ -170,6 +172,13 @@
           type: RECEIVE_BOOKMARKS,
           bookmarks: bookmarks,
         }
+      }
+
+      function toggleBookmark(repoId) {
+        return {
+          type: TOGGLE_BOOKMARK,
+          repoId: repoId,
+        };
       }
 
       /**
