@@ -129,21 +129,21 @@
       );
 
       function intialApp() {
-        store.dispatch(fetchPublicRepos());
-        store.dispatch(fetchBookmarks());
+        store.dispatch(actions.fetchPublicRepos());
+        store.dispatch(actions.fetchBookmarks());
       }
 
       intialApp();
 
       $(document).on('click', '.more-repo-btn', () => {
-        store.dispatch(fetchReposNextPage());
+        store.dispatch(actions.fetchReposNextPage());
       });
 
       $(document).on('click', '.bookmark', (e) => {
         e.preventDefault();
 
         const repoId = parseInt($(e.currentTarget).data('repo-id'), 10);
-        store.dispatch(toggleBookmark(repoId));
+        store.dispatch(actions.toggleBookmark(repoId));
       });
     </script>
   </body>
