@@ -327,10 +327,40 @@
             break;
           }
 
+          case CREATE_BOOKMARK: {
+            store.dispatch(bookmarkCreated(action.repoId, action.fullName));
 
+            $.ajax({
+              method: 'POST',
+              contentType: 'application/json',
+              url: '/api/v1/bookmarks',
+              data: JSON.stringify({ repo_id: action.repoId, full_name: action.fullName }),
+              error: (jqXHR, textStatus, error) => {
+                store.dispatch(showNotification(`${error}: ${jqXHR.responseJSON.message}`));
+                store.dispatch(bookmarkDeleted(action.repoId));
+              },
+            });
 
+            break;
+          }
 
+          case DELETE_BOOKMARK: {
+            store.dispatch(bookmarkDeleted(action.repoId));
 
+            $.ajax({
+              method: 'DELETE',
+              contentType: 'json',
+              url: `/api/v1/bookmarks/${action.repoId}`,
+              error: (jqXHR, textStatus, error) => {
+                const repo = state.repos.data.find(repo => repo.id === action.repoId);
+
+                store.dispatch(showNotification(error));
+                store.dispatch(bookmarkCreated(repo.id, repo.full_name));
+              },
+            });
+
+            break;
+          }
 
           case SET_REPOS_ARE_SAVED: {
             $('#app').html(repoList.render({ repos: state.repos.data }));
