@@ -240,10 +240,9 @@
           case SET_REPOS_ARE_SAVED:
             return Object.assign(
               state,
-              { data: state.data.map(repo => (action.bookmarkIds.includes(repo.id))
-                ? Object.assign(repo, { is_saved: true })
-                : repo)
-              }
+              { data: state.data.map(repo => (
+                Object.assign(repo, { is_saved: action.bookmarkIds.includes(repo.id) })
+              ))}
             );
           
           default:
