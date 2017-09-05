@@ -156,9 +156,10 @@
         }
       }
 
-      function receiveBookmarks() {
+      function receiveBookmarks(bookmarks) {
         return {
           type: RECEIVE_BOOKMARKS,
+          bookmarks: bookmarks,
         }
       }
 
