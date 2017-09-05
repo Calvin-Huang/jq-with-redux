@@ -323,58 +323,11 @@
         }
       });
 
-      function toggleBookmark(repoId) {
-        const selectedRepo = repos.find(repo => repo.id === repoId);
-        selectedRepo.is_saved = !selectedRepo.is_saved;
 
-        $('#app').html(repoList.render({ repos: repos }));
 
-        if (selectedRepo.is_saved) {
-          const { full_name } = selectedRepo;
-          createBookmark(repoId, full_name);
-        } else {
-          deleteBookmark(repoId);
-        }
-      }
 
-      function createBookmark(repoId, fullName) {
-        $.ajax({
-          method: 'POST',
-          contentType: 'application/json',
-          url: '/api/v1/bookmarks',
-          data: JSON.stringify({ repo_id: repoId, full_name: fullName }),
-          error: (jqXHR, textStatus, error) => {
-            showNotification(`${error}: ${jqXHR.responseJSON.message}`);
 
-            const selectedRepo = repos.find(repo => repo.id === repoId);
-            selectedRepo.is_saved = !selectedRepo.is_saved;
 
-            $('#app').html(repoList.render({ repos: repos }));
-          },
-        });
-      }
-
-      function deleteBookmark(repoId) {
-        $.ajax({
-          method: 'DELETE',
-          contentType: 'json',
-          url: `/api/v1/bookmarks/${repoId}`,
-          error: (jqXHR, textStatus, error) => {
-            showNotification(error);
-
-            const selectedRepo = repos.find(repo => repo.id === repoId);
-            selectedRepo.is_saved = selectedRepo.is_saved;
-
-            $('#app').html(repoList.render({ repos: repos }));
-          },
-        });
-      }
-
-      function showNotification(message) {
-        const modal = $('#notification');
-        modal.find('.message').text(message);
-        modal.modal({ show: true });
-      }
 
       function intialApp() {
         store.dispatch(fetchPublicRepos());
