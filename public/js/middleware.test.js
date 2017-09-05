@@ -19,8 +19,21 @@ describe('test middleware behavior', () => {
 
     const mockStore = configureMockStore([middleware(types, actions, $)]);
     const store = mockStore({
-      repos: { page: 1, data: [] },
+      repos: { page: 1, data: [{ id: 1, full_name: 'foo/boo' }] },
       bookmarks: [],
+    });
+
+    it('createBookmark action should trigger bookmarkCreated and setReposAreSaved action', () => {
+      const expectedActions = [
+        actions.createBookmark(1, 'foo/boo'),
+        actions.bookmarkCreated(1, 'foo/boo'),
+
+        // There is no reducer included, so bookmarks array stil is empty.
+        actions.setReposAreSaved([]),
+      ]
+      store.dispatch(expectedActions[0]);
+
+      expect(store.getActions()).toEqual(expectedActions);
     });
   });
 });
