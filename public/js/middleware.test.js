@@ -18,12 +18,13 @@ describe('test middleware behavior', () => {
     $.templates = () => ({ render: () => {} });
 
     const mockStore = configureMockStore([middleware(types, actions, $)]);
-    const store = mockStore({
-      repos: { page: 1, data: [{ id: 1, full_name: 'foo/boo' }] },
-      bookmarks: [],
-    });
 
     it('createBookmark action should triggers bookmarkCreated and setReposAreSaved action', () => {
+      const store = mockStore({
+        repos: { page: 1, data: [{ id: 1, full_name: 'foo/boo' }] },
+        bookmarks: [],
+      });
+
       const expectedActions = [
         actions.createBookmark(1, 'foo/boo'),
         actions.bookmarkCreated(1, 'foo/boo'),
