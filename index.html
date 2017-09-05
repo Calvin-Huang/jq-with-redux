@@ -117,57 +117,8 @@
     </script>
 
     <script src="/js/actions.js"></script>
+    <script src="/js/reducers.js"></script>
     <script>
-      /**
-       * Reducers
-       */
-      function repos(state = { page: 1, data: [] }, action) {
-        switch (action.type) {
-          case FETCH_REPOS_NEXT_PAGE:
-            return Object.assign(state, { page: state.page + 1 });
-
-          case RECEIVE_PUBLIC_REPOS:
-            return Object.assign(state, { data: state.data.concat(action.repos) });
-
-          case SET_REPOS_ARE_SAVED:
-            return Object.assign(
-              state,
-              { data: state.data.map(repo => (
-                Object.assign(repo, { is_saved: action.bookmarkIds.includes(repo.id) })
-              ))}
-            );
-          
-          default:
-            return state;
-        }
-      }
-
-      function bookmarks(state = [], action) {
-        switch (action.type) {
-          case RECEIVE_BOOKMARKS:
-            return state.concat(action.bookmarks);
-
-          case BOOKMARK_CREATED:
-            return state.concat({ repo_id: action.repoId, full_name: action.fullName });
-
-          case BOOKMARK_DELETED:
-            return state.filter(bookmark => bookmark.repo_id !== action.repoId);
-
-          default:
-            return state;
-        }
-      }
-
-      function lastAction(state = null, action) {
-        return action;
-      }
-
-      const reducers = Redux.combineReducers({
-        repos: repos,
-        bookmarks: bookmarks,
-        lastAction: lastAction,
-      });
-
       const store = Redux.createStore(
         reducers,
         window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
