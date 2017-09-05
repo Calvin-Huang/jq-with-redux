@@ -362,6 +362,13 @@
             break;
           }
 
+          case BOOKMARK_CREATED:
+          case BOOKMARK_DELETED: {
+            store.dispatch(setReposAreSaved(state.bookmarks.map(bookmark => bookmark.repo_id)));
+
+            break;
+          }
+
           case SET_REPOS_ARE_SAVED: {
             $('#app').html(repoList.render({ repos: state.repos.data }));
 
