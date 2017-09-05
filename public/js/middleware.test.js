@@ -93,4 +93,32 @@ describe('test middleware behavior', () => {
       });
     });
   });
+
+  describe('when network request failed', () => {
+    const errorText = 'Request error';
+    const message = 'Failed';
+    const $ = (selector, context) => new jQuery(selector, context);
+    $.templates = () => ({ render: () => { } });
+    $.ajax = ({ error }) => error({ responseJSON: { message: message } }, null, errorText);
+    const mockStore = configureMockStore([middleware(types, actions, $)]);
+
+    it('createBookmark action should triggers bookmarkCreated, then invoke deleteBookmark because request failed', () => {
+      const store = mockStore({
+        repos: { page: 1, data: [{ id: 1, full_name: 'foo/boo' }] },
+        bookmarks: [],
+      });
+
+      const expectedActions = [
+        actions.createBookmark(1, 'foo/boo'),
+        actions.bookmarkCreated(1, 'foo/boo'),
+        actions.setReposAreSaved([]),
+        actions.showNotification(`${errorText}: ${message}`),
+        actions.bookmarkDeleted(1),
+        actions.setReposAreSaved([]),
+      ];
+      store.dispatch(expectedActions[0]);
+
+      expect(store.getActions()).toEqual(expectedActions);
+    });
+  })
 });
