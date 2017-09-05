@@ -10,11 +10,12 @@ describe('test middleware behavior', () => {
   class jQuery {
     constructor(selector, context) { }
     html() { }
+    modal() { return { find: () => ({}) }; }
   }
-  const $ = (selector, context) => new jQuery(selector, context);
-  $.templates = () => ({ render: () => { } });
 
   describe('when the network request is fine', () => {
+    const $ = (selector, context) => new jQuery(selector, context);
+    $.templates = () => ({ render: () => { } });
     $.ajax = () => { };
     const mockStore = configureMockStore([middleware(types, actions, $)]);
 
