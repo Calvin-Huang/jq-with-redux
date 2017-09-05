@@ -238,17 +238,8 @@
         }
       });
 
-      function fetchBookmarks() {
-        $.getJSON('/api/v1/bookmarks')
-          .done((data) => {
-            bookmarks = data;
-            const bookmarkIds = bookmarks.map(bookmark => bookmark.repo_id);
 
-            repos.map(repo => Object.assign(repo, { is_saved: bookmarkIds.includes(repo.id) }));
 
-            $('#app').html(repoList.render({ repos: repos }));
-          });
-      }
 
       function toggleBookmark(repoId) {
         const selectedRepo = repos.find(repo => repo.id === repoId);
@@ -305,7 +296,7 @@
 
       function intialApp() {
         store.dispatch(fetchPublicRepos());
-        fetchBookmarks();
+        store.dispatch(fetchBookmarks());
       }
 
       intialApp();
