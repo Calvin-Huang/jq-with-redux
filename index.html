@@ -248,16 +248,29 @@
             break;
           }
 
-          case RECEIVE_PUBLIC_REPOS: {
+          case FETCH_BOOKMARKS: {
+            $.getJSON('/api/v1/bookmarks')
+              .done((data) => {
+                store.dispatch(receiveBookmarks(data));
+              });
+
+            break;
+          }
+
+          case RECEIVE_PUBLIC_REPOS:
+          case RECEIVE_BOOKMARKS: {
+            store.dispatch(setReposAreSaved(state.bookmarks.map(bookmark => bookmark.repo_id)));
+
+            break;
+          }
+
+          case SET_REPOS_ARE_SAVED: {
             $('#app').html(repoList.render({ repos: state.repos.data }));
 
             break;
           }
         }
       });
-
-
-
 
       function toggleBookmark(repoId) {
         const selectedRepo = repos.find(repo => repo.id === repoId);
