@@ -117,8 +117,6 @@
     </script>
 
     <script>
-      var bookmarks = [];
-
       /**
        * Action types
        */
@@ -126,6 +124,21 @@
       const RECEIVE_PUBLIC_REPOS = 'RECEIVE_PUBLIC_REPOS';
 
       const FETCH_REPOS_NEXT_PAGE = 'FETCH_REPOS_NEXT_PAGE';
+
+      const SET_REPOS_ARE_SAVED = 'SET_REPOS_ARE_SAVED';
+
+      const FETCH_BOOKMARKS = 'FETCH_BOOKMARKS';
+      const RECEIVE_BOOKMARKS = 'RECEIVE_BOOKMARKS';
+
+      const TOGGLE_BOOKMARK = 'TOGGLE_BOOKMARK';
+
+      const CREATE_BOOKMARK = 'CREATE_BOOKMARK';
+      const BOOKMARK_CREATED = 'BOOKMARK_CREATED';
+
+      const DELETE_BOOKMARK = 'DELETE_BOOKMARK';
+      const BOOKMARK_DELETED = 'BOOKMARK_DELETED';
+
+      const SHOW_NOTIFICATION = 'SHOW_NOTIFICATION';
 
       /**
        * Action creators
@@ -149,6 +162,70 @@
         }
       }
 
+      function setReposAreSaved(bookmarkIds) {
+        return {
+          type: SET_REPOS_ARE_SAVED,
+          bookmarkIds: bookmarkIds,
+        }
+      }
+
+      function fetchBookmarks() {
+        return {
+          type: FETCH_BOOKMARKS,
+        }
+      }
+
+      function receiveBookmarks(bookmarks) {
+        return {
+          type: RECEIVE_BOOKMARKS,
+          bookmarks: bookmarks,
+        }
+      }
+
+      function toggleBookmark(repoId) {
+        return {
+          type: TOGGLE_BOOKMARK,
+          repoId: repoId,
+        };
+      }
+
+      function createBookmark(repoId, fullName) {
+        return {
+          type: CREATE_BOOKMARK,
+          repoId: repoId,
+          fullName: fullName,
+        };
+      }
+
+      function bookmarkCreated(repoId, fullName) {
+        return {
+          type: BOOKMARK_CREATED,
+          repoId: repoId,
+          fullName: fullName,
+        };
+      }
+
+      function deleteBookmark(repoId) {
+        return {
+          type: DELETE_BOOKMARK,
+          repoId: repoId,
+        };
+      }
+
+      function bookmarkDeleted(repoId) {
+        return {
+          type: BOOKMARK_DELETED,
+          repoId: repoId,
+        };
+      }
+
+      function showNotification(message) {
+        return {
+          type: SHOW_NOTIFICATION,
+          message: message,
+        }
+      }
+
       /**
        * Reducers
        */
@@ -159,7 +236,31 @@
 
           case RECEIVE_PUBLIC_REPOS:
             return Object.assign(state, { data: state.data.concat(action.repos) });
+
+          case SET_REPOS_ARE_SAVED:
+            return Object.assign(
+              state,
+              { data: state.data.map(repo => (
+                Object.assign(repo, { is_saved: action.bookmarkIds.includes(repo.id) })
+              ))}
+            );
           
+          default:
+            return state;
+        }
+      }
+
+      function bookmarks(state = [], action) {
+        switch (action.type) {
+          case RECEIVE_BOOKMARKS:
+            return state.concat(action.bookmarks);
+
+          case BOOKMARK_CREATED:
+            return state.concat({ repo_id: action.repoId, full_name: action.fullName });
+
+          case BOOKMARK_DELETED:
+            return state.filter(bookmark => bookmark.repo_id !== action.repoId);
+
           default:
             return state;
         }
@@ -171,6 +272,7 @@
 
       const reducers = Redux.combineReducers({
         repos: repos,
+        bookmarks: bookmarks,
         lastAction: lastAction,
       });
 
@@ -205,95 +307,108 @@
             break;
           }
 
-          case RECEIVE_PUBLIC_REPOS: {
+          case FETCH_BOOKMARKS: {
+            $.getJSON('/api/v1/bookmarks')
+              .done((data) => {
+                store.dispatch(receiveBookmarks(data));
+              });
+
+            break;
+          }
+
+          case RECEIVE_PUBLIC_REPOS:
+          case RECEIVE_BOOKMARKS: {
+            store.dispatch(setReposAreSaved(state.bookmarks.map(bookmark => bookmark.repo_id)));
+
+            break;
+          }
+
+          case TOGGLE_BOOKMARK: {
+            if (state.bookmarks.find(bookmark => bookmark.repo_id === action.repoId)) {
+              store.dispatch(deleteBookmark(action.repoId));
+
+            } else {
+              const repo = state.repos.data.find(repo => repo.id === action.repoId);
+              store.dispatch(createBookmark(repo.id, repo.full_name));
+            }
+
+            break;
+          }
+
+          case CREATE_BOOKMARK: {
+            store.dispatch(bookmarkCreated(action.repoId, action.fullName));
+
+            $.ajax({
+              method: 'POST',
+              contentType: 'application/json',
+              url: '/api/v1/bookmarks',
+              data: JSON.stringify({ repo_id: action.repoId, full_name: action.fullName }),
+              error: (jqXHR, textStatus, error) => {
+                store.dispatch(showNotification(`${error}: ${jqXHR.responseJSON.message}`));
+                store.dispatch(bookmarkDeleted(action.repoId));
+              },
+            });
+
+            break;
+          }
+
+          case DELETE_BOOKMARK: {
+            store.dispatch(bookmarkDeleted(action.repoId));
+
+            $.ajax({
+              method: 'DELETE',
+              contentType: 'json',
+              url: `/api/v1/bookmarks/${action.repoId}`,
+              error: (jqXHR, textStatus, error) => {
+                const repo = state.repos.data.find(repo => repo.id === action.repoId);
+
+                store.dispatch(showNotification(error));
+                store.dispatch(bookmarkCreated(repo.id, repo.full_name));
+              },
+            });
+
+            break;
+          }
+
+          case BOOKMARK_CREATED:
+          case BOOKMARK_DELETED: {
+            store.dispatch(setReposAreSaved(state.bookmarks.map(bookmark => bookmark.repo_id)));
+
+            break;
+          }
+
+          case SET_REPOS_ARE_SAVED: {
             $('#app').html(repoList.render({ repos: state.repos.data }));
+
+            break;
+          }
+
+          case SHOW_NOTIFICATION: {
+            const modal = $('#notification');
+            modal.find('.message').text(action.message);
+            modal.modal({ show: true });
 
             break;
           }
         }
       });
 
-      function fetchBookmarks() {
-        $.getJSON('/api/v1/bookmarks')
-          .done((data) => {
-            bookmarks = data;
-            const bookmarkIds = bookmarks.map(bookmark => bookmark.repo_id);
-
-            repos.map(repo => Object.assign(repo, { is_saved: bookmarkIds.includes(repo.id) }));
-
-            $('#app').html(repoList.render({ repos: repos }));
-          });
-      }
-
-      function toggleBookmark(repoId) {
-        const selectedRepo = repos.find(repo => repo.id === repoId);
-        selectedRepo.is_saved = !selectedRepo.is_saved;
-
-        $('#app').html(repoList.render({ repos: repos }));
-
-        if (selectedRepo.is_saved) {
-          const { full_name } = selectedRepo;
-          createBookmark(repoId, full_name);
-        } else {
-          deleteBookmark(repoId);
-        }
-      }
-
-      function createBookmark(repoId, fullName) {
-        $.ajax({
-          method: 'POST',
-          contentType: 'application/json',
-          url: '/api/v1/bookmarks',
-          data: JSON.stringify({ repo_id: repoId, full_name: fullName }),
-          error: (jqXHR, textStatus, error) => {
-            showNotification(`${error}: ${jqXHR.responseJSON.message}`);
-
-            const selectedRepo = repos.find(repo => repo.id === repoId);
-            selectedRepo.is_saved = !selectedRepo.is_saved;
-
-            $('#app').html(repoList.render({ repos: repos }));
-          },
-        });
-      }
-
-      function deleteBookmark(repoId) {
-        $.ajax({
-          method: 'DELETE',
-          contentType: 'json',
-          url: `/api/v1/bookmarks/${repoId}`,
-          error: (jqXHR, textStatus, error) => {
-            showNotification(error);
-
-            const selectedRepo = repos.find(repo => repo.id === repoId);
-            selectedRepo.is_saved = selectedRepo.is_saved;
-
-            $('#app').html(repoList.render({ repos: repos }));
-          },
-        });
-      }
-
-      function showNotification(message) {
-        const modal = $('#notification');
-        modal.find('.message').text(message);
-        modal.modal({ show: true });
-      }
-
       function intialApp() {
         store.dispatch(fetchPublicRepos());
-        fetchBookmarks();
+        store.dispatch(fetchBookmarks());
       }
 
       intialApp();
 
       $(document).on('click', '.more-repo-btn', () => {
-        fetchPublicRepos(page++);
+        store.dispatch(fetchReposNextPage());
       });
 
       $(document).on('click', '.bookmark', (e) => {
         e.preventDefault();
 
         const repoId = parseInt($(e.currentTarget).data('repo-id'), 10);
-        toggleBookmark(repoId);
+        store.dispatch(toggleBookmark(repoId));
       });
     </script>
   </body>
