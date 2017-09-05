@@ -10,7 +10,9 @@ describe('test middleware behavior', () => {
   class jQuery {
     constructor(selector, context) { }
     html() { }
-    modal() { return { find: () => ({}) }; }
+    find() { return this; }
+    modal() { return this; }
+    text() {}
   }
 
   describe('when the network request is fine', () => {
