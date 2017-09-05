@@ -121,29 +121,29 @@
     <script src="/js/middleware.js"></script>
     <script>
       const store = Redux.createStore(
-        reducers(actionTypes, Redux),
+        reducers(actions.types, Redux),
         window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
         Redux.applyMiddleware(
-          middleware(actionTypes, actions, $),
+          middleware.default(actions.types, actions.default, $),
         ),
       );
 
       function intialApp() {
-        store.dispatch(actions.fetchPublicRepos());
-        store.dispatch(actions.fetchBookmarks());
+        store.dispatch(actions.default.fetchPublicRepos());
+        store.dispatch(actions.default.fetchBookmarks());
       }
 
       intialApp();
 
       $(document).on('click', '.more-repo-btn', () => {
-        store.dispatch(actions.fetchReposNextPage());
+        store.dispatch(actions.default.fetchReposNextPage());
       });
 
       $(document).on('click', '.bookmark', (e) => {
         e.preventDefault();
 
         const repoId = parseInt($(e.currentTarget).data('repo-id'), 10);
-        store.dispatch(actions.toggleBookmark(repoId));
+        store.dispatch(actions.default.toggleBookmark(repoId));
       });
     </script>
   </body>
