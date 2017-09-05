@@ -315,6 +315,23 @@
             break;
           }
 
+          case TOGGLE_BOOKMARK: {
+            if (state.bookmarks.find(bookmark => bookmark.repo_id === action.repoId)) {
+              store.dispatch(deleteBookmark(action.repoId));
+
+            } else {
+              const repo = state.repos.data.find(repo => repo.id === action.repoId);
+              store.dispatch(createBookmark(repo.id, repo.full_name));
+            }
+
+            break;
+          }
+
+
+
+
+
+
           case SET_REPOS_ARE_SAVED: {
             $('#app').html(repoList.render({ repos: state.repos.data }));
 
@@ -322,12 +339,6 @@
           }
         }
       });
-
-
-
-
-
-
 
       function intialApp() {
         store.dispatch(fetchPublicRepos());
