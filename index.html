@@ -247,6 +247,12 @@
           case RECEIVE_BOOKMARKS:
             return state.concat(action.bookmarks);
 
+          case BOOKMARK_CREATED:
+            return state.concat({ repo_id: action.repoId, full_name: action.fullName });
+
+          case BOOKMARK_DELETED:
+            return state.filter(bookmark => bookmark.repo_id !== action.repoId);
+
           default:
             return state;
         }
