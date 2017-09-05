@@ -138,6 +138,8 @@
       const DELETE_BOOKMARK = 'DELETE_BOOKMARK';
       const BOOKMARK_DELETED = 'BOOKMARK_DELETED';
 
+      const SHOW_NOTIFICATION = 'SHOW_NOTIFICATION';
+
       /**
        * Action creators
        */
@@ -215,6 +217,13 @@
           type: BOOKMARK_DELETED,
           repoId: repoId,
         };
+      }
+
+      function showNotification(message) {
+        return {
+          type: SHOW_NOTIFICATION,
+          message: message,
+        }
       }
 
       /**
@@ -371,6 +380,14 @@
 
           case SET_REPOS_ARE_SAVED: {
             $('#app').html(repoList.render({ repos: state.repos.data }));
+
+            break;
+          }
+
+          case SHOW_NOTIFICATION: {
+            const modal = $('#notification');
+            modal.find('.message').text(action.message);
+            modal.modal({ show: true });
 
             break;
           }
