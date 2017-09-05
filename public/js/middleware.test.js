@@ -31,7 +31,7 @@ describe('test middleware behavior', () => {
 
         // There is no reducer included, so bookmarks array stil is empty.
         actions.setReposAreSaved([]),
-      ]
+      ];
       store.dispatch(expectedActions[0]);
 
       expect(store.getActions()).toEqual(expectedActions);
@@ -49,7 +49,7 @@ describe('test middleware behavior', () => {
 
         // There is no reducer included, so bookmarks array stil is not empty.
         actions.setReposAreSaved([1]),
-      ]
+      ];
       store.dispatch(expectedActions[0]);
 
       expect(store.getActions()).toEqual(expectedActions);
