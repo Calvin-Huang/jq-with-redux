@@ -132,6 +132,9 @@
 
       const TOGGLE_BOOKMARK = 'TOGGLE_BOOKMARK';
 
+      const CREATE_BOOKMARK = 'CREATE_BOOKMARK';
+      const BOOKMARK_CREATED = 'BOOKMARK_CREATED';
+
       /**
        * Action creators
        */
@@ -178,6 +181,22 @@
         return {
           type: TOGGLE_BOOKMARK,
           repoId: repoId,
+        };
+      }
+
+      function createBookmark(repoId, fullName) {
+        return {
+          type: CREATE_BOOKMARK,
+          repoId: repoId,
+          fullName: fullName,
+        };
+      }
+
+      function bookmarkCreated(repoId, fullName) {
+        return {
+          type: BOOKMARK_CREATED,
+          repoId: repoId,
+          fullName: fullName,
         };
       }
 
