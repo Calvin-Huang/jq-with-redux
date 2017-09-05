@@ -120,5 +120,24 @@ describe('test middleware behavior', () => {
 
       expect(store.getActions()).toEqual(expectedActions);
     });
+
+    it('deketeBookmark action should triggers bookmarkDeleted, then invoke createBookmark because request failed', () => {
+      const store = mockStore({
+        repos: { page: 1, data: [{ id: 1, full_name: 'foo/boo' }] },
+        bookmarks: [{ repo_id: 1, full_name: 'foo/boo' }],
+      });
+
+      const expectedActions = [
+        actions.deleteBookmark(1),
+        actions.bookmarkDeleted(1),
+        actions.setReposAreSaved([1]),
+        actions.showNotification(errorText),
+        actions.bookmarkCreated(1, 'foo/boo'),
+        actions.setReposAreSaved([1]),
+      ];
+      store.dispatch(expectedActions[0]);
+
+      expect(store.getActions()).toEqual(expectedActions);
+    });
   })
 });
