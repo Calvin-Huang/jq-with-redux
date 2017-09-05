@@ -28,12 +28,13 @@
         flex: 1;
       }
     </style>
-    <script src="//code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jsrender/0.9.88/jsrender.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsrender/0.9.88/jsrender.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
       crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1"
       crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/redux/3.7.2/redux.min.js"></script>
   </head>
   <body>
     <div id="app" class="container">
@@ -115,109 +116,34 @@
       </div>
     </script>
 
+    <script src="/js/actions.js"></script>
+    <script src="/js/reducers.js"></script>
+    <script src="/js/middleware.js"></script>
     <script>
-      var repos = [];
-      var bookmarks = [];
-      var page = 1;
-      
-      const repoList = $
-        .templates(
-          'repo-list',
-          { markup: '#repo-list', templates: { repo: $.templates('#repo') } },
-        );
-
-      function fetchPublicRepos(page = 1) {
-        $.getJSON(`https://api.github.com/search/repositories?q=language:javascript&per_page=10&page=${page}`)
-          .done((data) => {
-            const bookmarkIds = bookmarks.map(bookmark => bookmark.repo_id);
-
-            repos = repos.concat(data.items.map(repo => Object.assign(repo, { is_saved: bookmarkIds.includes(repo.id) })));
-
-            $('#app').html(repoList.render({ repos: repos }));
-          });
-      }
-
-      function fetchBookmarks() {
-        $.getJSON('/api/v1/bookmarks')
-          .done((data) => {
-            bookmarks = data;
-            const bookmarkIds = bookmarks.map(bookmark => bookmark.repo_id);
-
-            repos.map(repo => Object.assign(repo, { is_saved: bookmarkIds.includes(repo.id) }));
-
-            $('#app').html(repoList.render({ repos: repos }));
-          });
-      }
-
-      function toggleBookmark(repoId) {
-        const selectedRepo = repos.find(repo => repo.id === repoId);
-        selectedRepo.is_saved = !selectedRepo.is_saved;
-
-        $('#app').html(repoList.render({ repos: repos }));
-
-        if (selectedRepo.is_saved) {
-          const { full_name } = selectedRepo;
-          createBookmark(repoId, full_name);
-        } else {
-          deleteBookmark(repoId);
-        }
-      }
-
-      function createBookmark(repoId, fullName) {
-        $.ajax({
-          method: 'POST',
-          contentType: 'application/json',
-          url: '/api/v1/bookmarks',
-          data: JSON.stringify({ repo_id: repoId, full_name: fullName }),
-          error: (jqXHR, textStatus, error) => {
-            showNotification(`${error}: ${jqXHR.responseJSON.message}`);
-
-            const selectedRepo = repos.find(repo => repo.id === repoId);
-            selectedRepo.is_saved = !selectedRepo.is_saved;
-
-            $('#app').html(repoList.render({ repos: repos }));
-          },
-        });
-      }
-
-      function deleteBookmark(repoId) {
-        $.ajax({
-          method: 'DELETE',
-          contentType: 'json',
-          url: `/api/v1/bookmarks/${repoId}`,
-          error: (jqXHR, textStatus, error) => {
-            showNotification(error);
-
-            const selectedRepo = repos.find(repo => repo.id === repoId);
-            selectedRepo.is_saved = selectedRepo.is_saved;
-
-            $('#app').html(repoList.render({ repos: repos }));
-          },
-        });
-      }
-
-      function showNotification(message) {
-        const modal = $('#notification');
-        modal.find('.message').text(message);
-        modal.modal({ show: true });
-      }
+      const store = Redux.createStore(
+        reducers(actions.types, Redux),
+        window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
+        Redux.applyMiddleware(
+          middleware.default(actions.types, actions.default, $),
+        ),
+      );
 
       function intialApp() {
-        fetchPublicRepos(page++);
-        fetchBookmarks();
+        store.dispatch(actions.default.fetchPublicRepos());
+        store.dispatch(actions.default.fetchBookmarks());
       }
 
       intialApp();
 
       $(document).on('click', '.more-repo-btn', () => {
-        fetchPublicRepos(page++);
+        store.dispatch(actions.default.fetchReposNextPage());
       });
 
       $(document).on('click', '.bookmark', (e) => {
         e.preventDefault();
 
         const repoId = parseInt($(e.currentTarget).data('repo-id'), 10);
-        toggleBookmark(repoId);
+        store.dispatch(actions.default.toggleBookmark(repoId));
       });
     </script>
   </body>

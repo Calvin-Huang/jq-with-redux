@@ -8,7 +8,7 @@ const Bookmark = require('./models/bookmark');
 
 server.use(bodyParser.json());
 
-server.use('/views', express.static(path.resolve(__dirname, 'public', 'views')));
+server.use('/', express.static(path.resolve(__dirname, 'public')));
 
 server.get('/', (req, res) => {
   res.sendFile(path.resolve(__dirname, 'index.html'));
