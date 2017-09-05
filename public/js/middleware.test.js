@@ -36,5 +36,23 @@ describe('test middleware behavior', () => {
 
       expect(store.getActions()).toEqual(expectedActions);
     });
+
+    it('deleteBookmark action should triggers bookmarkDeleted and setReposAreSaved action', () => {
+      const store = mockStore({
+        repos: { page: 1, data: [{ id: 1, full_name: 'foo/boo' }] },
+        bookmarks: [{ repo_id: 1, full_name: 'foo/boo' }],
+      });
+
+      const expectedActions = [
+        actions.deleteBookmark(1),
+        actions.bookmarkDeleted(1),
+
+        // There is no reducer included, so bookmarks array stil is not empty.
+        actions.setReposAreSaved([1]),
+      ]
+      store.dispatch(expectedActions[0]);
+
+      expect(store.getActions()).toEqual(expectedActions);
+    })
   });
 });
