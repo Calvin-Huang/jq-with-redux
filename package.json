@@ -1,7 +1,7 @@
 {
   "name": "jq-with-redux",
   "scripts": {
-    "heroku-prebuild": "./node_modules/sequelize-cli/bin/sequelize db:migrate --url $DATABASE_URL",
+    "prestart": "./node_modules/sequelize-cli/bin/sequelize db:migrate --url $DATABASE_URL",
     "db:migrate": "./node_modules/sequelize-cli/bin/sequelize db:migrate",
     "start": "node ./server.js",
     "test": "yarn jest ./public/**/*.js"
