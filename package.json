@@ -1,6 +1,8 @@
 {
   "name": "jq-with-redux",
   "scripts": {
+    "heroku-prebuild": "yarn db:migrate",
+    "db:migrate": "./node_modules/sequelize-cli/bin/sequelize db:migrate && yarn db:seed",
     "start": "node ./server.js",
     "test": "yarn jest ./public/**/*.js"
   },
