@@ -12,7 +12,7 @@
     FETCH_PUBLIC_REPOS: 'FETCH_PUBLIC_REPOS',
     RECEIVE_PUBLIC_REPOS: 'RECEIVE_PUBLIC_REPOS',
 
-    FETCH_REPOS_NEXT_PAGE: 'FETCH_REPOS_NEXT_PAGE',
+    NEXT_PAGE: 'NEXT_PAGE',
 
     SET_REPOS_ARE_SAVED: 'SET_REPOS_ARE_SAVED',
 
@@ -51,8 +51,11 @@
       },
 
       fetchReposNextPage() {
-        return dispatch => {
-          dispatch({ type: actionTypes.FETCH_PUBLIC_REPOS });
+        return (dispatch, getState) => {
+          const state = getState();
+
+          dispatch({ type: actionTypes.NEXT_PAGE });
+          dispatch(this.fetchPublicRepos());
         };
       },
 

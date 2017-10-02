@@ -5,7 +5,7 @@ const reducers = (actionTypes, redux) => {
    */
   function repos(state = { page: 1, data: [] }, action) {
     switch (action.type) {
-      case actionTypes.FETCH_REPOS_NEXT_PAGE:
+      case actionTypes.NEXT_PAGE:
         return Object.assign(state, { page: state.page + 1 });
 
       case actionTypes.RECEIVE_PUBLIC_REPOS:
