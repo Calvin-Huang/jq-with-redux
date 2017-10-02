@@ -6,6 +6,8 @@ const server = express();
 
 const Bookmark = require('./models/bookmark');
 
+const port = process.env.PORT || 3000;
+
 server.use(bodyParser.json());
 
 server.use('/', express.static(path.resolve(__dirname, 'public')));
@@ -62,6 +64,6 @@ apiV1Route.delete('/bookmarks/:repo_id', async (req, res) => {
 
 server.use('/api/v1', apiV1Route);
 
-server.listen('3000', () => {
-  console.log('> Server is ready on port 3000.')
+server.listen(port, () => {
+  console.log(`> Server is ready on port ${port}.`);
 });
