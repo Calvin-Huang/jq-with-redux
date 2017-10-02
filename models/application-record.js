@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 const databaseUrl = process.env.DATABASE_URL;
 
 if (databaseUrl) {
-  module.exports = new Sequelize(databaseUrl, { underscored: true }); 
+  module.exports = new Sequelize(databaseUrl, { define: { underscored: true } }); 
 } else {
   const config = require('../config/config')[process.env.NODE_ENV || 'development'];
 
