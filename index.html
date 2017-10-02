@@ -121,6 +121,7 @@
     <script src="/js/reducers.js"></script>
     <script>
       const actionCreators = actions.default($);
+      const actionTypes = actions.types;
 
       const store = Redux.createStore(
         reducers(actions.types, Redux),
@@ -129,6 +130,33 @@
           ReduxThunk.default,
         ),
       );
+
+      store.subscribe(() => {
+        const state = store.getState();
+        const action = state.lastAction;
+
+        switch (action.type) {
+          case actionTypes.SET_REPOS_ARE_SAVED: {
+            const repoList = $
+              .templates(
+              'repo-list',
+              { markup: '#repo-list', templates: { repo: $.templates('#repo') } },
+            );
+
+            $('#app').html(repoList.render({ repos: state.repos.data }));
+
+            break;
+          }
+
+          case actionTypes.SHOW_NOTIFICATION: {
+            const modal = $('#notification');
+            modal.find('.message').text(action.message);
+            modal.modal({ show: true });
+
+            break;
+          }
+        };
+      });
 
       function intialApp() {
         store.dispatch(actionCreators.fetchPublicRepos());
