@@ -119,7 +119,6 @@
 
     <script src="/js/actions.js"></script>
     <script src="/js/reducers.js"></script>
-    <script src="/js/middleware.js"></script>
     <script>
       const actionCreators = actions.default($);
 
@@ -128,7 +127,6 @@
         window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
         Redux.applyMiddleware(
           ReduxThunk.default,
-          middleware.default(actions.types, actionCreators, $),
         ),
       );
 
