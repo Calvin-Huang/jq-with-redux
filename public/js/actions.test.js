@@ -1,11 +1,9 @@
 import configureMockStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
 
-import middleware from './middleware';
-import actions, { types } from './actions';
+import actionCreators, { types } from './actions';
 
-import util from 'util';
-
-describe('test middleware behavior', () => {
+describe('test action behavior', () => {
   // Mock jQuery.
   class jQuery {
     constructor(selector, context) { }
@@ -19,7 +17,8 @@ describe('test middleware behavior', () => {
     const $ = (selector, context) => new jQuery(selector, context);
     $.templates = () => ({ render: () => { } });
     $.ajax = () => { };
-    const mockStore = configureMockStore([middleware(types, actions, $)]);
+    const mockStore = configureMockStore([thunk]);
+    const actions = actionCreators($);
 
     it('createBookmark action should triggers bookmarkCreated and setReposAreSaved action', () => {
       const store = mockStore({
@@ -28,13 +27,12 @@ describe('test middleware behavior', () => {
       });
 
       const expectedActions = [
-        actions.createBookmark(1, 'foo/boo'),
-        actions.bookmarkCreated(1, 'foo/boo'),
+        { "fullName": "foo/boo", "repoId": 1, "type": "BOOKMARK_CREATED" },
 
         // There is no reducer included, so bookmarks array stil is empty.
-        actions.setReposAreSaved([]),
+        { "bookmarkIds": [], "type": "SET_REPOS_ARE_SAVED" },
       ];
-      store.dispatch(expectedActions[0]);
+      store.dispatch(actions.bookmarkCreated(1, 'foo/boo'));
 
       expect(store.getActions()).toEqual(expectedActions);
     });
@@ -46,13 +44,12 @@ describe('test middleware behavior', () => {
       });
 
       const expectedActions = [
-        actions.deleteBookmark(1),
-        actions.bookmarkDeleted(1),
+        { "repoId": 1, "type": "BOOKMARK_DELETED" },
 
         // There is no reducer included, so bookmarks array stil is not empty.
-        actions.setReposAreSaved([1]),
+        { "bookmarkIds": [1], "type": "SET_REPOS_ARE_SAVED" },
       ];
-      store.dispatch(expectedActions[0]);
+      store.dispatch(actions.deleteBookmark(1));
 
       expect(store.getActions()).toEqual(expectedActions);
     });
@@ -65,12 +62,10 @@ describe('test middleware behavior', () => {
         });
 
         const expectedActions = [
-          actions.toggleBookmark(1),
-          actions.deleteBookmark(1),
-          actions.bookmarkDeleted(1),
-          actions.setReposAreSaved([1]),
+          { "repoId": 1, "type": "BOOKMARK_DELETED" },
+          { "bookmarkIds": [1], "type": "SET_REPOS_ARE_SAVED" },
         ];
-        store.dispatch(expectedActions[0]);
+        store.dispatch(actions.toggleBookmark(1));
 
         expect(store.getActions()).toEqual(expectedActions);
       });
@@ -82,12 +77,10 @@ describe('test middleware behavior', () => {
         });
 
         const expectedActions = [
-          actions.toggleBookmark(1),
-          actions.createBookmark(1, 'foo/boo'),
-          actions.bookmarkCreated(1, 'foo/boo'),
-          actions.setReposAreSaved([]),
+          { "fullName": "foo/boo", "repoId": 1, "type": "BOOKMARK_CREATED" },
+          { "bookmarkIds": [], "type": "SET_REPOS_ARE_SAVED" },
         ];
-        store.dispatch(expectedActions[0]);
+        store.dispatch(actions.toggleBookmark(1));
 
         expect(store.getActions()).toEqual(expectedActions);
       });
@@ -100,7 +93,8 @@ describe('test middleware behavior', () => {
     const $ = (selector, context) => new jQuery(selector, context);
     $.templates = () => ({ render: () => { } });
     $.ajax = ({ error }) => error({ responseJSON: { message: message } }, null, errorText);
-    const mockStore = configureMockStore([middleware(types, actions, $)]);
+    const mockStore = configureMockStore([thunk]);
+    const actions = actionCreators($);
 
     it('createBookmark action should triggers bookmarkCreated, then invoke deleteBookmark because request failed', () => {
       const store = mockStore({
@@ -109,14 +103,13 @@ describe('test middleware behavior', () => {
       });
 
       const expectedActions = [
-        actions.createBookmark(1, 'foo/boo'),
-        actions.bookmarkCreated(1, 'foo/boo'),
-        actions.setReposAreSaved([]),
-        actions.showNotification(`${errorText}: ${message}`),
-        actions.bookmarkDeleted(1),
-        actions.setReposAreSaved([]),
+        { "fullName": "foo/boo", "repoId": 1, "type": "BOOKMARK_CREATED" },
+        { "bookmarkIds": [], "type": "SET_REPOS_ARE_SAVED" },
+        { "message": "Request error: Failed", "type": "SHOW_NOTIFICATION" },
+        { "repoId": 1, "type": "BOOKMARK_DELETED" },
+        { "bookmarkIds": [], "type": "SET_REPOS_ARE_SAVED" },
       ];
-      store.dispatch(expectedActions[0]);
+      store.dispatch(actions.createBookmark(1, 'foo/boo'));
 
       expect(store.getActions()).toEqual(expectedActions);
     });
@@ -128,14 +121,13 @@ describe('test middleware behavior', () => {
       });
 
       const expectedActions = [
-        actions.deleteBookmark(1),
-        actions.bookmarkDeleted(1),
-        actions.setReposAreSaved([1]),
-        actions.showNotification(errorText),
-        actions.bookmarkCreated(1, 'foo/boo'),
-        actions.setReposAreSaved([1]),
+        { "repoId": 1, "type": "BOOKMARK_DELETED" },
+        { "bookmarkIds": [1], "type": "SET_REPOS_ARE_SAVED" },
+        { "message": "Request error", "type": "SHOW_NOTIFICATION" },
+        { "fullName": "foo/boo", "repoId": 1, "type": "BOOKMARK_CREATED" },
+        { "bookmarkIds": [1], "type": "SET_REPOS_ARE_SAVED" },
       ];
-      store.dispatch(expectedActions[0]);
+      store.dispatch(actions.deleteBookmark(1));
 
       expect(store.getActions()).toEqual(expectedActions);
     });
