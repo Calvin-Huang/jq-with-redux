@@ -1,7 +1,7 @@
 {
   "name": "jq-with-redux",
   "scripts": {
-    "prestart": "./node_modules/sequelize-cli/bin/sequelize db:migrate --url $DATABASE_URL",
+    "heroku-postbuild": "./node_modules/sequelize-cli/bin/sequelize db:migrate --url $DATABASE_URL",
     "db:migrate": "./node_modules/sequelize-cli/bin/sequelize db:migrate",
     "start": "node ./server.js",
     "test": "yarn jest ./public/**/*.js"
@@ -11,6 +11,7 @@
     "body-parser": "^1.17.2",
     "express": "^4.15.4",
     "jest": "^21.0.1",
+    "pg": "^7.3.0",
     "redux": "^3.7.2",
     "redux-mock-store": "^1.2.3",
     "sequelize": "^4.8.0",

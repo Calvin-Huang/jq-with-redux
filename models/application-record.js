@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize');
-const config = require('../config/config')[process.env.NODE_ENV || 'development'];
+const config = process.env.DATABASE_URL || require('../config/config')[process.env.NODE_ENV || 'development'];
 
 config.define = {
   underscored: true,
